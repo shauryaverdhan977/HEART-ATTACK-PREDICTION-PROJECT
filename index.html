@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CardioScan Risk Analyzer</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <!-- HEART -->
+        <div class="heart-glow">
+            ❤️
+        </div>
+
+        <div class="badge">● AI-POWERED CLINICAL ANALYSIS</div>
+
+        <h1>CardioScan <span>Risk</span> Analyzer</h1>
+
+        <p class="subtitle">
+            Enter clinical vitals to evaluate heart attack risk using AI model.
+        </p>
+
+        <div class="divider"><span>PATIENT DATA</span></div>
+
+        <!-- FORM -->
+        <form method="POST" action="/predict" onsubmit="showLoader()">
+
+            <div class="grid">
+
+                <div class="field">
+                    <label>AGE</label>
+                    <input type="number" name="age" placeholder="e.g. 52" min="1" max="120" required>
+                </div>
+
+                <div class="field">
+                    <label>GENDER</label>
+                    <select name="gender" required>
+                        <option value="">Select...</option>
+                        <option value="0">Female</option>
+                        <option value="1">Male</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>HEART RATE (bpm)</label>
+                    <input type="number" name="hr" placeholder="e.g. 72">
+                </div>
+
+                <div class="field">
+                    <label>SYSTOLIC BP (mmHg)</label>
+                    <input type="number" name="sys_bp" placeholder="e.g. 120">
+                </div>
+
+                <div class="field">
+                    <label>DIASTOLIC BP (mmHg)</label>
+                    <input type="number" name="dia_bp" placeholder="e.g. 80">
+                </div>
+
+                <div class="field">
+                    <label>BLOOD SUGAR (mg/dL)</label>
+                    <input type="number" name="sugar" placeholder="e.g. 140">
+                </div>
+
+            </div>
+
+            <button type="submit">Analyze Risk</button>
+
+        </form>
+
+        <!-- LOADER -->
+        <div id="loader" class="loader hidden">Processing...</div>
+
+        <!-- RESULT -->
+        {% if result %}
+        <div class="result" id="resultBox">
+
+            <h3>{{ result }}</h3>
+
+            <!-- PROGRESS BAR -->
+            <div class="progress">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+
+            <p>Probability: {{ prob }}</p>
+            <p id="riskText"></p>
+
+        </div>
+
+        <script>
+            const prob = parseFloat("{{ prob }}");
+            const bar = document.getElementById("progressBar");
+            const box = document.getElementById("resultBox");
+            const riskText = document.getElementById("riskText");
+
+            bar.style.width = (prob * 100) + "%";
+
+            if(prob > 0.6){
+                box.classList.add("high");
+                riskText.innerText = "⚠ High Risk - Consult a doctor";
+            } else {
+                box.classList.add("low");
+                riskText.innerText = "✅ Low Risk - Maintain healthy lifestyle";
+            }
+        </script>
+        {% endif %}
+
+        <!-- DISCLAIMER -->
+        <p class="disclaimer">
+            Disclaimer: This is an AI prototype for academic purposes. Consult a doctor for medical advice.
+        </p>
+
+    </div>
+
+</div>
+
+<script>
+function showLoader(){
+    document.getElementById("loader").classList.remove("hidden");
+}
+</script>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>
